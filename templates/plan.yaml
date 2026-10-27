@@ -1,28 +1,34 @@
 
-stages:
-  - stage: TerraformPlan
-    displayName: Terraform Plan
-    dependsOn: TerraformInit
+jobs:
+  - job: terraformPlan
+    displayName: Terraform Plan Job
 
-    jobs:
-      - job: terraformplan
+    pool:
+      name: Cloud
+
+    steps:
+      - checkout: self
+
+      - task: TerraformInstaller@1
+        displayName: Install Terraform
+        inputs:
+          terraformVersion: 'latest'
+
+      - task: TerraformTask@5
+        displayName: Terraform Init
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
+          backendServiceArm: 'Aishh-svc'
+          backendAzureRmStorageAccountName: 'b18g35common'
+          backendAzureRmContainerName: 'b18g35commoncontainer'
+          backendAzureRmKey: 'infra.tfstate'
+
+      - task: TerraformTask@5
         displayName: Terraform Plan
-
-        pool:
-          name: Cloud
-
-        steps:
-          
-
-          - task: TerraformInstaller@1
-            displayName: Install Terraform
-            inputs:
-              terraformVersion: '1.17.0'
-
-          - task: TerraformTask@5
-            displayName: Terraform Plan
-            inputs:
-              provider: 'azurerm'
-              command: 'plan'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
-              environmentServiceNameAzureRM: 'Aishh-svc'
+        inputs:
+          provider: 'azurerm'
+          command: 'plan'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
+          environmentServiceNameAzureRM: 'Aishh-svc'
