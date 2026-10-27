@@ -12,7 +12,7 @@ stages:
           name: Cloud
 
         steps:
-          - checkout: self
+          
 
           - task: TerraformInstaller@1
             displayName: Install Terraform
