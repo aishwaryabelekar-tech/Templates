@@ -1,0 +1,32 @@
+
+stages:
+  - stage: TerraformInit
+    displayName: Terraform Init
+
+    jobs:
+      - job: terraforminit
+        displayName: Terraform Init
+
+        pool:
+          name: Cloud
+
+        steps:
+          - checkout: self
+
+          - task: TerraformInstaller@1
+            displayName: Install Terraform
+            inputs:
+              terraformVersion: '1.17.0'
+
+          - task: TerraformTask@5
+            displayName: Terraform Init
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
+              backendServiceArm: 'Aishh-svc'
+              backendAzureRmResourceGroupName: 'B18_G35_Common_RG'
+              backendAzureRmStorageAccountName: 'b18g35common'
+              backendAzureRmContainerName: 'b18g35commoncontainer'
+              backendAzureRmKey: 'infra.tfstate'
+              commandOptions: '-backend-config=use_azuread_auth=true'

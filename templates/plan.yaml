@@ -1,0 +1,28 @@
+
+stages:
+  - stage: TerraformPlan
+    displayName: Terraform Plan
+    dependsOn: TerraformInit
+
+    jobs:
+      - job: terraformplan
+        displayName: Terraform Plan
+
+        pool:
+          name: Cloud
+
+        steps:
+          - checkout: self
+
+          - task: TerraformInstaller@1
+            displayName: Install Terraform
+            inputs:
+              terraformVersion: '1.17.0'
+
+          - task: TerraformTask@5
+            displayName: Terraform Plan
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/environments/dev'
+              environmentServiceNameAzureRM: 'Aishh-svc'
